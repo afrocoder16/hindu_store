@@ -1,0 +1,1 @@
+# hindu_store
