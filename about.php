@@ -53,7 +53,7 @@ if(isset($_SESSION['user_id'])){
       <div class="content">
          <h3>why choose us?</h3>
          <h2>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt, 
-            neque debitis incidunt qui ipsum sed doloremque a molestiae in veritatis ullam similique sunt aliquam dolores dolore? 
+            neque debitis incidunt ullam similique sunt aliquam dolores dolore? 
             Quasi atque debitis nobis!</h2>
          <a href="menu.php" class="btn">our menu</a>
       </div>
