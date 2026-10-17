@@ -1,0 +1,48 @@
+---
+import { Image, getImage } from 'astro:assets';
+import type { Product } from '../data/products';
+import { categories } from '../data/categories';
+import { site } from '../config';
+import { formatPrice } from '../lib/format';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const categoryName = categories.find((c) => c.id === product.category)?.name;
+const thumb = await getImage({ src: product.image, width: 144, height: 144, format: 'webp' });
+const href = `/product/${product.id}/`;
+---
+
+<article class="card">
+  <a class="card-media" href={href} tabindex="-1" aria-hidden="true">
+    <Image
+      src={product.image}
+      alt=""
+      widths={[320, 480, 720]}
+      sizes="(min-width: 1040px) 270px, (min-width: 760px) 30vw, 46vw"
+      loading="lazy"
+    />
+  </a>
+  <div class="card-body">
+    <span class="tag">{categoryName}</span>
+    <h3><a href={href}>{product.name}</a></h3>
+    <p class="card-desc">{product.description}</p>
+    <div class="card-foot">
+      <span class="price">{formatPrice(product.price, site.currency)}</span>
+      <button
+        class="btn btn-small"
+        type="button"
+        data-add
+        data-id={product.id}
+        data-name={product.name}
+        data-price={product.price}
+        data-image={thumb.src}
+        aria-label={`Add ${product.name} to cart`}
+      >
+        Add
+      </button>
+    </div>
+  </div>
+</article>

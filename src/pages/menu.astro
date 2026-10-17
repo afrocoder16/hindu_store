@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { products } from '../data/products';
+import { categories } from '../data/categories';
+---
+
+<BaseLayout title="Menu" description="Browse main dishes, snacks, drinks and desserts.">
+  <div class="wrap">
+    <div class="page-head">
+      <span class="eyebrow">Our menu</span>
+      <h1>Everything we make</h1>
+      <p>Main dishes, snacks, drinks and sweets. Add to your cart and order when you're ready.</p>
+    </div>
+
+    <nav class="chips" aria-label="Menu categories">
+      {categories.map((c) => <a class="chip" href={`#${c.id}`}>{c.name}</a>)}
+    </nav>
+
+    {categories.map((c) => (
+      <section class="menu-section" id={c.id} aria-labelledby={`${c.id}-title`}>
+        <div class="section-head">
+          <h2 id={`${c.id}-title`}>{c.name}</h2>
+        </div>
+        <div class="grid">
+          {products.filter((p) => p.category === c.id).map((p) => <ProductCard product={p} />)}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

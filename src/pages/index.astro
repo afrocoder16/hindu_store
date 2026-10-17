@@ -1,0 +1,91 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { products } from '../data/products';
+import { categories } from '../data/categories';
+import { site } from '../config';
+
+const featuredIds = ['fish-rice', 'sambusa', 'roasted-chicken', 'baklava', 'lassi', 'meat-rice'];
+const featured = featuredIds.map((id) => products.find((p) => p.id === id)!);
+const count = (id: string) => products.filter((p) => p.category === id).length;
+const byId = (id: string) => products.find((p) => p.id === id)!;
+---
+
+<BaseLayout>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">Order online</span>
+        <h1>Warm plates, made fresh for you.</h1>
+        <p class="lead">{site.tagline} Pick your favorites, build your cart and place your order in minutes.</p>
+        <div class="hero-actions">
+          <a class="btn" href="/menu/">See the menu</a>
+          <a class="btn btn-ghost" href="/about/">Our story</a>
+        </div>
+        <ul class="hero-facts">
+          <li>Open daily, {site.hours}</li>
+          <li>{products.length} dishes on the menu</li>
+        </ul>
+      </div>
+      <div class="collage">
+        <Image src={byId('fish-rice').image} alt="Fried fish served on spiced rice" widths={[400, 640]} sizes="(min-width: 860px) 330px, 55vw" loading="eager" />
+        <Image src={byId('sambusa').image} alt="Golden fried sambusa" widths={[300, 500]} sizes="(min-width: 860px) 270px, 45vw" loading="eager" />
+        <Image src={byId('baklava').image} alt="Baklava with syrup and nuts" widths={[300, 500]} sizes="(min-width: 860px) 270px, 45vw" loading="eager" />
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="cats-title">
+      <div class="section-head">
+        <h2 id="cats-title">Browse by category</h2>
+      </div>
+      <div class="cats">
+        {categories.map((c) => (
+          <a class="cat" href={`/menu/#${c.id}`}>
+            <Image src={c.image} alt="" width={96} height={96} loading="lazy" />
+            <span>{c.name}</span>
+            <small>{count(c.id)} items</small>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="popular-title">
+      <div class="section-head">
+        <h2 id="popular-title">Popular right now</h2>
+        <a class="link-arrow" href="/menu/">View full menu &rarr;</a>
+      </div>
+      <div class="grid">
+        {featured.map((p) => <ProductCard product={p} />)}
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="how-title">
+      <div class="section-head">
+        <h2 id="how-title">How it works</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <h3>Choose your food</h3>
+          <p>Browse the menu and add what you like to your cart.</p>
+        </div>
+        <div class="step">
+          <h3>Send your order</h3>
+          <p>Add your name and address, then send the order to us.</p>
+        </div>
+        <div class="step">
+          <h3>Enjoy</h3>
+          <p>We prepare everything fresh and get it to you.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="band">
+        <h2>Hungry? Your table is waiting.</h2>
+        <p>Open daily, {site.hours}.</p>
+        <a class="btn" href="/menu/">Order now</a>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

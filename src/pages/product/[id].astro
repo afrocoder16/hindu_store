@@ -1,0 +1,80 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { products } from '../../data/products';
+import { categories } from '../../data/categories';
+import { site } from '../../config';
+import { formatPrice } from '../../lib/format';
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { id: product.id }, props: { product } }));
+}
+
+const { product } = Astro.props;
+const category = categories.find((c) => c.id === product.category)!;
+const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+const thumb = await getImage({ src: product.image, width: 144, height: 144, format: 'webp' });
+---
+
+<BaseLayout title={product.name} description={product.description}>
+  <div class="wrap">
+    <p class="crumbs" style="padding-top:1.2rem">
+      <a href="/menu/">Menu</a> / <a href={`/menu/#${category.id}`}>{category.name}</a> / {product.name}
+    </p>
+
+    <section class="product">
+      <div class="product-img">
+        <Image src={product.image} alt={product.name} widths={[480, 800, 1100]} sizes="(min-width: 800px) 540px, 100vw" loading="eager" />
+      </div>
+      <div>
+        <span class="tag">{category.name}</span>
+        <h1 style="font-size:clamp(2rem,5vw,3rem)">{product.name}</h1>
+        <p class="muted">{product.description}</p>
+        <p class="product-price">{formatPrice(product.price, site.currency)}</p>
+
+        <div class="buy-row">
+          <div class="qty" data-qty-wrap>
+            <button type="button" aria-label="Decrease quantity" data-step="-1">&minus;</button>
+            <input id="qty" type="number" min="1" max="99" value="1" inputmode="numeric" aria-label="Quantity" />
+            <button type="button" aria-label="Increase quantity" data-step="1">+</button>
+          </div>
+          <button
+            class="btn"
+            type="button"
+            data-add
+            data-qty-input="#qty"
+            data-id={product.id}
+            data-name={product.name}
+            data-price={product.price}
+            data-image={thumb.src}
+          >
+            Add to cart
+          </button>
+        </div>
+      </div>
+    </section>
+
+    {related.length > 0 && (
+      <section class="section" aria-labelledby="related-title">
+        <div class="section-head">
+          <h2 id="related-title">More {category.name.toLowerCase()}</h2>
+        </div>
+        <div class="grid">
+          {related.map((p) => <ProductCard product={p} />)}
+        </div>
+      </section>
+    )}
+  </div>
+
+  <script>
+    const input = document.querySelector<HTMLInputElement>('#qty');
+    document.querySelectorAll<HTMLButtonElement>('[data-qty-wrap] [data-step]').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (!input) return;
+        const next = (Number(input.value) || 1) + Number(b.dataset.step);
+        input.value = String(Math.min(99, Math.max(1, next)));
+      }),
+    );
+  </script>
+</BaseLayout>

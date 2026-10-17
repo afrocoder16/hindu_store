@@ -1,0 +1,199 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../config';
+
+const channel = site.whatsapp ? 'whatsapp' : site.email ? 'email' : 'copy';
+const buttonLabel = { whatsapp: 'Send order on WhatsApp', email: 'Send order by email', copy: 'Copy my order' }[channel];
+---
+
+<BaseLayout title="Your cart" description="Review your order and send it to us.">
+  <div class="wrap">
+    <div class="page-head">
+      <span class="eyebrow">Your order</span>
+      <h1>Cart</h1>
+    </div>
+
+    <div id="cart-empty" class="empty" hidden>
+      <h2>Your cart is empty</h2>
+      <p>Add a few dishes from the menu to get started.</p>
+      <a class="btn" href="/menu/">Browse the menu</a>
+    </div>
+
+    <div id="cart-content" class="cart-layout" hidden>
+      <ul id="cart-lines" class="cart-lines"></ul>
+
+      <aside class="panel" aria-labelledby="checkout-title">
+        <h2 id="checkout-title" style="font-size:1.4rem">Checkout</h2>
+        <div class="totals"><span>Total</span><span id="cart-total">$0.00</span></div>
+
+        <form id="checkout-form" class="form" data-channel={channel} data-whatsapp={site.whatsapp} data-email={site.email} data-currency={site.currency} data-site={site.name}>
+          <div class="field">
+            <label for="co-name">Name</label>
+            <input id="co-name" name="name" autocomplete="name" required maxlength="60" />
+          </div>
+          <div class="field">
+            <label for="co-phone">Phone</label>
+            <input id="co-phone" name="phone" type="tel" autocomplete="tel" required maxlength="20" />
+          </div>
+          <div class="field">
+            <label for="co-address">Delivery address</label>
+            <textarea id="co-address" name="address" autocomplete="street-address" required maxlength="300"></textarea>
+          </div>
+          <div class="field">
+            <label for="co-notes">Notes (optional)</label>
+            <input id="co-notes" name="notes" maxlength="200" />
+          </div>
+          <button class="btn" type="submit">{buttonLabel}</button>
+          {channel === 'copy' && (
+            <p class="note">Online ordering isn't connected yet, so this copies your order to paste in a message to us.</p>
+          )}
+          <p class="note" id="checkout-status" role="status"></p>
+        </form>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    import { readCart, setQty, removeFromCart, cartTotal } from '../scripts/cart';
+    import type { CartLine } from '../scripts/cart';
+
+    const form = document.querySelector<HTMLFormElement>('#checkout-form')!;
+    const currency = form.dataset.currency ?? '$';
+    const money = (n: number) => `${currency}${n.toFixed(2)}`;
+
+    const emptyEl = document.querySelector<HTMLElement>('#cart-empty')!;
+    const contentEl = document.querySelector<HTMLElement>('#cart-content')!;
+    const linesEl = document.querySelector<HTMLUListElement>('#cart-lines')!;
+    const totalEl = document.querySelector<HTMLElement>('#cart-total')!;
+    const statusEl = document.querySelector<HTMLElement>('#checkout-status')!;
+
+    function lineEl(l: CartLine) {
+      const li = document.createElement('li');
+      li.className = 'line';
+      li.dataset.id = l.id;
+
+      const img = document.createElement('img');
+      img.src = l.image;
+      img.alt = '';
+      img.width = 72;
+      img.height = 72;
+
+      const info = document.createElement('div');
+      const name = document.createElement('div');
+      name.className = 'line-name';
+      name.textContent = l.name;
+      const unit = document.createElement('div');
+      unit.className = 'muted';
+      unit.textContent = `${money(l.price)} each`;
+
+      const controls = document.createElement('div');
+      controls.className = 'line-controls';
+      const qty = document.createElement('div');
+      qty.className = 'qty';
+      const minus = document.createElement('button');
+      minus.type = 'button';
+      minus.textContent = '−';
+      minus.setAttribute('aria-label', `Decrease ${l.name}`);
+      minus.dataset.act = 'dec';
+      const num = document.createElement('input');
+      num.type = 'number';
+      num.min = '1';
+      num.max = '99';
+      num.value = String(l.qty);
+      num.setAttribute('aria-label', `${l.name} quantity`);
+      num.dataset.act = 'set';
+      const plus = document.createElement('button');
+      plus.type = 'button';
+      plus.textContent = '+';
+      plus.setAttribute('aria-label', `Increase ${l.name}`);
+      plus.dataset.act = 'inc';
+      qty.append(minus, num, plus);
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'linkish';
+      remove.textContent = 'Remove';
+      remove.dataset.act = 'remove';
+      controls.append(qty, remove);
+
+      info.append(name, unit, controls);
+
+      const total = document.createElement('div');
+      total.className = 'line-total';
+      total.textContent = money(l.price * l.qty);
+
+      li.append(img, info, total);
+      return li;
+    }
+
+    function render() {
+      const lines = readCart();
+      emptyEl.hidden = lines.length > 0;
+      contentEl.hidden = lines.length === 0;
+      linesEl.replaceChildren(...lines.map(lineEl));
+      totalEl.textContent = money(cartTotal(lines));
+    }
+
+    linesEl.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const act = target.dataset.act;
+      const id = target.closest<HTMLElement>('.line')?.dataset.id;
+      if (!act || !id) return;
+      const line = readCart().find((l) => l.id === id);
+      if (!line) return;
+      if (act === 'inc') setQty(id, line.qty + 1);
+      if (act === 'dec') line.qty > 1 ? setQty(id, line.qty - 1) : removeFromCart(id);
+      if (act === 'remove') removeFromCart(id);
+    });
+
+    linesEl.addEventListener('change', (e) => {
+      const input = e.target as HTMLInputElement;
+      const id = input.closest<HTMLElement>('.line')?.dataset.id;
+      if (input.dataset.act === 'set' && id) setQty(id, Number(input.value));
+    });
+
+    window.addEventListener('cart:change', render);
+
+    function orderText(data: FormData) {
+      const lines = readCart();
+      const rows = lines.map((l) => `- ${l.qty} x ${l.name} (${money(l.price * l.qty)})`);
+      const notes = String(data.get('notes') ?? '').trim();
+      return [
+        `New order for ${form.dataset.site}`,
+        '',
+        ...rows,
+        '',
+        `Total: ${money(cartTotal(lines))}`,
+        '',
+        `Name: ${data.get('name')}`,
+        `Phone: ${data.get('phone')}`,
+        `Address: ${data.get('address')}`,
+        ...(notes ? [`Notes: ${notes}`] : []),
+      ].join('\n');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (readCart().length === 0) return;
+      const text = orderText(new FormData(form));
+      const channel = form.dataset.channel;
+
+      if (channel === 'whatsapp') {
+        window.open(`https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+        statusEl.textContent = 'WhatsApp opened with your order. Send the message to finish.';
+      } else if (channel === 'email') {
+        const subject = encodeURIComponent(`New order for ${form.dataset.site}`);
+        window.location.href = `mailto:${form.dataset.email}?subject=${subject}&body=${encodeURIComponent(text)}`;
+        statusEl.textContent = 'Your email app opened with your order. Send it to finish.';
+      } else {
+        try {
+          await navigator.clipboard.writeText(text);
+          statusEl.textContent = 'Order copied. Paste it into a message to us.';
+        } catch {
+          statusEl.textContent = 'Could not copy automatically. Please select the details and message us.';
+        }
+      }
+    });
+
+    render();
+  </script>
+</BaseLayout>

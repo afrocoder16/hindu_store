@@ -1,0 +1,34 @@
+---
+import { site } from '../config';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">{site.name}</div>
+        <p>{site.tagline}</p>
+      </div>
+      <div>
+        <h3>Explore</h3>
+        <ul>
+          <li><a href="/menu/">Menu</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/cart/">Your cart</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Visit</h3>
+        <ul>
+          <li>Open daily, {site.hours}</li>
+          {site.address && <li>{site.address}</li>}
+          {site.phone && <li><a href={`tel:${site.phone}`}>{site.phone}</a></li>}
+          {site.email && <li><a href={`mailto:${site.email}`}>{site.email}</a></li>}
+        </ul>
+      </div>
+    </div>
+    <div class="copy">&copy; {year} {site.name}. All rights reserved.</div>
+  </div>
+</footer>
