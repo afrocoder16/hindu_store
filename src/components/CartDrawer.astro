@@ -1,0 +1,128 @@
+---
+import { site } from '../config';
+
+const hasCashApp = site.cashTag.trim() !== '';
+---
+
+<div class="backdrop" data-backdrop></div>
+
+<aside class="drawer" data-drawer role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true">
+  <div class="drawer-head">
+    <h2 id="drawer-title">Your order</h2>
+    <button class="icon-btn" type="button" data-close-cart aria-label="Close cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+  </div>
+
+  <!-- Step 1: cart -->
+  <section class="view" data-view="cart">
+    <div class="drawer-body">
+      <div class="empty" data-empty hidden style="padding-block:2rem">
+        <h3>Your cart is empty</h3>
+        <p class="muted">Add a few dishes from the menu to get started.</p>
+        <a class="btn" href="/#menu" data-close-cart>Browse the menu</a>
+      </div>
+      <ul class="cart-lines" data-lines></ul>
+    </div>
+    <div class="drawer-foot" data-cart-foot>
+      <div class="sum"><div class="total"><span>Subtotal</span><span data-subtotal>$0.00</span></div></div>
+      <button class="btn btn-block" type="button" data-go-checkout style="margin-top:0.9rem">Checkout</button>
+    </div>
+  </section>
+
+  <!-- Step 2: checkout -->
+  <form class="view" data-view="checkout" hidden>
+    <div class="drawer-body">
+      <button class="linkish" type="button" data-back-cart style="margin-bottom:1rem">&larr; Back to cart</button>
+      <div class="form">
+        <fieldset class="field">
+          <legend>How will you get it?</legend>
+          <div class="options">
+            <label class="option"><input type="radio" name="fulfillment" value="Pickup" checked /><span>Pickup</span></label>
+            <label class="option"><input type="radio" name="fulfillment" value="Dine-in" /><span>Dine-in</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="field">
+          <legend>When?</legend>
+          <div class="options">
+            <label class="option"><input type="radio" name="when" value="asap" checked data-when-asap /><span>As soon as possible<small data-asap-note></small></span></label>
+            <label class="option"><input type="radio" name="when" value="later" /><span>Pick a time</span></label>
+          </div>
+          <select name="slot" data-slot aria-label="Pickup time" hidden></select>
+        </fieldset>
+
+        <div class="field">
+          <label for="co-name">Name</label>
+          <input id="co-name" name="name" type="text" autocomplete="name" required maxlength="60" />
+        </div>
+        <div class="field">
+          <label for="co-phone">Phone</label>
+          <input id="co-phone" name="phone" type="tel" autocomplete="tel" required maxlength="20" />
+        </div>
+        <div class="field">
+          <label for="co-notes">Notes (optional)</label>
+          <textarea id="co-notes" name="notes" maxlength="200" placeholder="Allergies, spice level, anything we should know"></textarea>
+        </div>
+
+        <fieldset class="field">
+          <legend>Add a tip (optional)</legend>
+          <div class="options">
+            <label class="option"><input type="radio" name="tip" value="0" checked /><span>None</span></label>
+            <label class="option"><input type="radio" name="tip" value="10" /><span>10%</span></label>
+            <label class="option"><input type="radio" name="tip" value="15" /><span>15%</span></label>
+            <label class="option"><input type="radio" name="tip" value="20" /><span>20%</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="field">
+          <legend>How will you pay?</legend>
+          <div class="options">
+            <label class="option"><input type="radio" name="payment" value="counter" checked /><span>Pay at the counter<small>Cash or card</small></span></label>
+            {hasCashApp && <label class="option"><input type="radio" name="payment" value="cashapp" /><span>Cash App<small>Pay after you order</small></span></label>}
+          </div>
+        </fieldset>
+
+        <div class="sum" data-summary>
+          <div><span>Subtotal</span><span data-s-subtotal></span></div>
+          <div data-tax-row hidden><span>Tax</span><span data-s-tax></span></div>
+          <div data-tip-row hidden><span>Tip</span><span data-s-tip></span></div>
+          <div class="total"><span>Total</span><span data-s-total></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn btn-block" type="submit" data-place>Place order</button>
+    </div>
+  </form>
+
+  <!-- Step 3: confirmation -->
+  <section class="view" data-view="done" hidden>
+    <div class="drawer-body">
+      <p class="eyebrow">Your order number</p>
+      <div class="order-no" data-order-no></div>
+      <p class="note" data-order-meta></p>
+      <p data-pay-line></p>
+
+      <div class="pay-box" data-cash-box hidden>
+        <strong>Pay with Cash App</strong>
+        <a class="btn btn-orange" data-cash-link href="#" target="_blank" rel="noopener">Open Cash App</a>
+        <img class="qr-only-desktop" data-cash-qr alt="QR code to pay with Cash App" width="176" height="176" hidden />
+        <p class="note" style="margin:0">Add <strong data-cash-note></strong> in the note so we can match your payment.</p>
+      </div>
+
+      <p class="note" data-send-status role="status" style="margin-top:1rem"></p>
+      <div class="field" data-order-text-wrap hidden>
+        <label for="order-text">Your order details (copy and send to us)</label>
+        <textarea id="order-text" data-order-text readonly rows="9"></textarea>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button class="btn btn-block" type="button" data-close-cart>Done</button>
+    </div>
+  </section>
+</aside>
+
+<script>
+  import '../scripts/order';
+</script>

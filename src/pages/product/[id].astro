@@ -20,7 +20,7 @@ const thumb = await getImage({ src: product.image, width: 144, height: 144, form
 <BaseLayout title={product.name} description={product.description}>
   <div class="wrap">
     <p class="crumbs" style="padding-top:1.2rem">
-      <a href="/menu/">Menu</a> / <a href={`/menu/#${category.id}`}>{category.name}</a> / {product.name}
+      <a href="/#menu">Menu</a> / <a href={`/#menu`}>{category.name}</a> / {product.name}
     </p>
 
     <section class="product">

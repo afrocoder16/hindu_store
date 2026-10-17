@@ -13,9 +13,10 @@ const { product } = Astro.props;
 const categoryName = categories.find((c) => c.id === product.category)?.name;
 const thumb = await getImage({ src: product.image, width: 144, height: 144, format: 'webp' });
 const href = `/product/${product.id}/`;
+const searchText = `${product.name} ${product.description} ${categoryName}`.toLowerCase();
 ---
 
-<article class="card">
+<article class="card" data-card data-search={searchText}>
   <a class="card-media" href={href} tabindex="-1" aria-hidden="true">
     <Image
       src={product.image}
