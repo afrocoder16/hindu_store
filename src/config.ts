@@ -1,5 +1,5 @@
 // Single place for brand and contact details.
-// TODO: confirm the brand name. The old header said "Hindi Store" and the old footer said "Hini Store Marshall".
+// Brand name confirmed by the owner: "Hindi Store".
 // Contact fields are left empty on purpose: the old site only had placeholder values.
 // Anything left empty is hidden on the site; once `whatsapp` or `email` is set, checkout sends orders there.
 export const site = {
