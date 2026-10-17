@@ -9,30 +9,33 @@ const year = new Date().getFullYear();
   <div class="wrap">
     <div class="footer-grid">
       <div>
-        <div class="footer-brand">{site.name}</div>
-        <p>{site.tagline}</p>
-        <p class="muted" style="color:#cdb79d">Groceries &middot; Deli &middot; Dine-in &middot; Carry-out</p>
+        <div class="footer-lead">Quality cultural <span class="script" style="color:var(--gold);font-size:1.15em;text-transform:none">foods</span></div>
+        <p style="color:var(--muted-dark);max-width:26rem">
+          {site.name} is a family-run grocery and deli in downtown Marshall. Dine in, carry out, or text your order ahead.
+        </p>
+        <a class="btn btn-gold btn-small" href={`sms:${site.smsNumber}`}>Text {site.phoneDisplay}</a>
       </div>
       <div>
         <h3>Explore</h3>
         <ul>
-          <li><a href="/#special">Specials</a></li>
+          <li><a href="/#special">This week's plate</a></li>
           <li><a href="/#menu">Menu</a></li>
+          <li><a href="/#how">How to order</a></li>
           <li><a href="/#story">Our story</a></li>
           <li><a href="/#visit">Visit</a></li>
-          <li><button class="linkish" type="button" data-open-cart style="color:#f1e3d0">Your cart</button></li>
         </ul>
       </div>
       <div>
         <h3>Visit</h3>
         <ul>
           <li>Open daily, {formatClock(OPEN_MIN)} to {formatClock(CLOSE_MIN)}</li>
-          {site.address && <li><a href={site.directionsUrl}>{site.address}</a></li>}
+          {site.address && <li><a href={site.directionsUrl} target="_blank" rel="noopener">{site.address}</a></li>}
           {site.phone && <li><a href={`tel:${site.phone}`}>{site.phoneDisplay}</a></li>}
           {site.email && <li><a href={`mailto:${site.email}`}>{site.email}</a></li>}
         </ul>
       </div>
     </div>
+    <div class="mega" aria-hidden="true">{site.name}</div>
     <div class="copy">
       <span>&copy; {year} {site.name}. All rights reserved.</span>
       <span class="credit">Site by <a href={site.credit.url} target="_blank" rel="noopener">{site.credit.name}</a></span>

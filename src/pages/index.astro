@@ -2,6 +2,7 @@
 import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MenuSection from '../components/MenuSection.astro';
+import NeonSign from '../components/NeonSign.astro';
 import { products } from '../data/products';
 import { site } from '../config';
 import { formatPrice } from '../lib/format';
@@ -9,28 +10,55 @@ import { OPEN_MIN, CLOSE_MIN, formatClock } from '../lib/hours';
 import storefront from '../assets/store/storefront.webp';
 import ahmed from '../assets/store/ahmed-omar.webp';
 
-const special = products.find((p) => p.id === site.special.productId)!;
+const byId = (id: string) => products.find((p) => p.id === id)!;
+const special = byId(site.special.productId);
 const specialThumb = await getImage({ src: special.image, width: 144, height: 144, format: 'webp' });
-const tickerItems =[...products.map((p) => p.name)];
+const tickerItems = products.map((p) => p.name);
 ---
 
 <BaseLayout>
-  <section class="hero" aria-labelledby="hero-title">
+  <section class="hero brick" aria-labelledby="hero-title">
     <div class="wrap hero-grid">
-      <div>
-        <span class="eyebrow">Marshall, Minnesota</span>
-        <h1 id="hero-title">Quality foods. <em>Warm welcome.</em> Always fresh.</h1>
-        <p class="lead">
-          A family-run grocery and deli in downtown Marshall. Order your favorites online for pickup or dine-in, or just come on in.
+      <div class="hero-copy">
+        <span class="kicker">Groceries &middot; Deli &middot; Dine-in &middot; Carry-out</span>
+        <h1 class="hero-title" id="hero-title">
+          Quality<br />cultural
+          <span class="script">foods</span>
+        </h1>
+        <p class="hero-lead">
+          Marshall's family-run grocery and deli on Main Street. Pick your plates, text your order ahead, and pay with Cash App or at the counter.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-orange" href="/#menu">Order online</a>
-          <a class="btn btn-light" href={`tel:${site.phone}`}>Call us</a>
+          <a class="btn btn-gold btn-lg" href="/#menu"><span class="arrow">Start your order</span></a>
+          <a class="btn btn-ghost btn-lg" href={`tel:${site.phone}`}>Call {site.phoneDisplay}</a>
         </div>
+        <ul class="pills">
+          <li>Open daily {formatClock(OPEN_MIN)} to {formatClock(CLOSE_MIN)}</li>
+          <li>Order by text</li>
+          <li>Cash App welcome</li>
+        </ul>
       </div>
-      <div class="hero-photo">
-        <Image src={storefront} alt="The Hindi Store storefront on Main Street with its orange brick wall and green OPEN sign" widths={[480, 720, 960]} sizes="(min-width: 900px) 440px, 90vw" loading="eager" />
-        <span class="hero-tag">Groceries &middot; Deli &middot; Dine-in &middot; Carry-out</span>
+
+      <div class="hero-visual">
+        <div class="stamp" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <defs><path id="stamp-a" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" /></defs>
+            <text><textPath href="#stamp-a" textLength="284" lengthAdjust="spacing">Fresh daily &#10022; Made to order &#10022;</textPath></text>
+          </svg>
+          <b>fresh</b>
+        </div>
+        <div class="photo-frame">
+          <Image src={storefront} alt="The Hindi Store storefront on Main Street with its orange brick wall and green OPEN sign" widths={[480, 720, 960]} sizes="(min-width: 960px) 440px, 90vw" loading="eager" />
+        </div>
+        <NeonSign />
+        <figure class="polaroid p1">
+          <Image src={byId('sambusa').image} alt="Sambusa" width={260} height={260} loading="eager" />
+          <figcaption>sambusa</figcaption>
+        </figure>
+        <figure class="polaroid p2">
+          <Image src={byId('baklava').image} alt="Baklava" width={260} height={260} loading="eager" />
+          <figcaption>baklava</figcaption>
+        </figure>
       </div>
     </div>
   </section>
@@ -41,31 +69,55 @@ const tickerItems =[...products.map((p) => p.name)];
     </div>
   </div>
 
-  <section class="section" id="special" aria-labelledby="special-title">
-    <div class="wrap">
-      <div class="special">
-        <div class="special-img">
-          <Image src={special.image} alt={special.name} widths={[480, 720, 1000]} sizes="(min-width: 860px) 560px, 100vw" loading="lazy" />
+  <section class="section dark" id="special" aria-labelledby="special-title" style="padding-top:clamp(5rem,10vw,8rem)">
+    <div class="wrap feature">
+      <div class="feature-img" data-reveal>
+        <Image src={special.image} alt={special.name} widths={[480, 720, 1000]} sizes="(min-width: 900px) 520px, 90vw" loading="lazy" />
+        <span class="price-tag">{formatPrice(special.price, site.currency)}</span>
+      </div>
+      <div class="feature-body" data-reveal style="--d:0.1s">
+        <span class="script-label">{site.special.label}</span>
+        <h2 id="special-title">{site.special.title}</h2>
+        <p class="muted" style="font-size:1.15rem;max-width:30rem">{site.special.text}</p>
+        <div class="btn-row" style="margin-top:1.6rem">
+          <button
+            class="btn btn-gold btn-lg"
+            type="button"
+            data-add
+            data-id={special.id}
+            data-name={special.name}
+            data-price={special.price}
+            data-image={specialThumb.src}
+          >
+            Add to order
+          </button>
+          <a class="btn btn-ghost btn-lg" href={`/product/${special.id}/`}>Details</a>
         </div>
-        <div class="special-body">
-          <span class="eyebrow">{site.special.label}</span>
-          <h2 id="special-title">{site.special.title}</h2>
-          <p class="muted">{site.special.text}</p>
-          <div class="special-price">{formatPrice(special.price, site.currency)}</div>
-          <div class="btn-row">
-            <button
-              class="btn"
-              type="button"
-              data-add
-              data-id={special.id}
-              data-name={special.name}
-              data-price={special.price}
-              data-image={specialThumb.src}
-            >
-              Add to cart
-            </button>
-            <a class="btn btn-ghost" href={`/product/${special.id}/`}>Details</a>
-          </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section how" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <div data-reveal>
+        <span class="eyebrow">How to order</span>
+        <h2 id="how-title">Three taps. <span class="script" style="font-size:1.15em;text-transform:none">That's it.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step" data-reveal>
+          <span class="step-num">01</span>
+          <h3>Pick your plates</h3>
+          <p>Browse the menu and tap Add. Choose pickup or dine-in, and a time that works.</p>
+        </div>
+        <div class="step" data-reveal style="--d:0.1s">
+          <span class="step-num">02</span>
+          <h3>Text it to us</h3>
+          <p>One tap opens a ready-to-send text to {site.phoneDisplay} with your whole order and order number.</p>
+        </div>
+        <div class="step" data-reveal style="--d:0.2s">
+          <span class="step-num">03</span>
+          <h3>Pay your way</h3>
+          <p>Pay with Cash App (amount filled in for you) or at the counter when you pick up.</p>
         </div>
       </div>
     </div>
@@ -75,16 +127,14 @@ const tickerItems =[...products.map((p) => p.name)];
 
   <section class="section story" id="story" aria-labelledby="story-title">
     <div class="wrap story-grid">
-      <figure style="margin:0">
-        <div class="story-photo">
-          <Image src={ahmed} alt="Ahmed Omar, owner of Hindi Store, standing beside the store's drink and frozen food coolers" widths={[480, 720, 1000]} sizes="(min-width: 860px) 520px, 100vw" loading="lazy" />
-        </div>
-        <figcaption class="caption">Ahmed Omar, owner</figcaption>
+      <figure class="story-photo" style="margin:0" data-reveal>
+        <Image src={ahmed} alt="Ahmed Omar, owner of Hindi Store, standing beside the store's drink and frozen food coolers" widths={[480, 720, 1000]} sizes="(min-width: 900px) 520px, 90vw" loading="lazy" />
+        <figcaption>Ahmed Omar, owner</figcaption>
       </figure>
-      <div>
+      <div data-reveal style="--d:0.1s">
         <span class="eyebrow">Our story</span>
-        <h2 id="story-title">A family store, <em>right on Main Street</em></h2>
         <!-- TODO: draft copy. Have Ahmed Omar review and edit before launch. -->
+        <h2 id="story-title">A family store <span class="script">on Main Street</span></h2>
         <p>
           Hindi Store is a family-run grocery and deli in downtown Marshall, owned by Ahmed Omar. Stop in for groceries and
           cultural foods that are hard to find elsewhere in town, and for hot plates from the deli counter.
@@ -95,32 +145,34 @@ const tickerItems =[...products.map((p) => p.name)];
           <li><strong>Made at the deli counter</strong>Dine-in or carry-out, cooked fresh.</li>
           <li><strong>A neighborhood welcome</strong>Family-run and part of Marshall's community.</li>
         </ul>
-        <div class="btn-row" style="margin-top:1.6rem">
-          <a class="btn btn-orange" href="/#visit">Come see us</a>
-        </div>
       </div>
     </div>
   </section>
 
   <section class="section" id="visit" aria-labelledby="visit-title">
     <div class="wrap visit-grid">
-      <div>
-        <span class="eyebrow">Visit</span>
-        <h2 id="visit-title">Come on <em>in</em></h2>
-        <p class="muted">The entrance is on the side of the building. Look for the orange wall and the green OPEN sign.</p>
+      <div class="ticket" data-reveal>
+        <span class="eyebrow">Visit us</span>
+        <h2 id="visit-title">Come on <span class="script" style="color:var(--gold);font-size:1.15em;text-transform:none">in</span></h2>
+        <p class="muted">The entrance is on the side of the building. Look for the orange brick wall and the green OPEN sign.</p>
         <ul class="info-list">
           <li><strong>Hours</strong>Open daily, {formatClock(OPEN_MIN)} to {formatClock(CLOSE_MIN)}</li>
           <li><strong>Address</strong>{site.address}</li>
-          <li><strong>Phone</strong><a href={`tel:${site.phone}`}>{site.phoneDisplay}</a></li>
-          {site.email && <li><strong>Email</strong><a href={`mailto:${site.email}`}>{site.email}</a></li>}
+          <li><strong>Text or call</strong><a href={`sms:${site.smsNumber}`}>{site.phoneDisplay}</a></li>
         </ul>
         <div class="btn-row">
-          <a class="btn" href={site.directionsUrl} target="_blank" rel="noopener">Get directions</a>
+          <a class="btn btn-gold" href={site.directionsUrl} target="_blank" rel="noopener">Get directions</a>
           <a class="btn btn-ghost" href={`tel:${site.phone}`}>Call us</a>
         </div>
       </div>
-      <div class="visit-photo">
-        <Image src={storefront} alt="Front door of Hindi Store with the sign reading Groceries and Deli, Dine-in, Carry-out" widths={[480, 720, 960]} sizes="(min-width: 860px) 540px, 100vw" loading="lazy" />
+      <div class="map" data-reveal style="--d:0.1s">
+        <iframe
+          title={`Map showing ${site.name} at ${site.address}`}
+          src={site.mapEmbedUrl}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
       </div>
     </div>
   </section>

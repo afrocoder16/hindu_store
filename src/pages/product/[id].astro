@@ -29,7 +29,7 @@ const thumb = await getImage({ src: product.image, width: 144, height: 144, form
       </div>
       <div>
         <span class="tag">{category.name}</span>
-        <h1 style="font-size:clamp(2rem,5vw,3rem)">{product.name}</h1>
+        <h1>{product.name}</h1>
         <p class="muted">{product.description}</p>
         <p class="product-price">{formatPrice(product.price, site.currency)}</p>
 
@@ -40,7 +40,7 @@ const thumb = await getImage({ src: product.image, width: 144, height: 144, form
             <button type="button" aria-label="Increase quantity" data-step="1">+</button>
           </div>
           <button
-            class="btn"
+            class="btn btn-gold btn-lg"
             type="button"
             data-add
             data-qty-input="#qty"
@@ -49,7 +49,7 @@ const thumb = await getImage({ src: product.image, width: 144, height: 144, form
             data-price={product.price}
             data-image={thumb.src}
           >
-            Add to cart
+            Add to order
           </button>
         </div>
       </div>
@@ -57,7 +57,7 @@ const thumb = await getImage({ src: product.image, width: 144, height: 144, form
 
     {related.length > 0 && (
       <section class="section" aria-labelledby="related-title">
-        <div class="section-head">
+        <div style="margin-bottom:1.4rem">
           <h2 id="related-title">More {category.name.toLowerCase()}</h2>
         </div>
         <div class="grid">

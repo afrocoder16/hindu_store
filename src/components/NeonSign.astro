@@ -1,0 +1,10 @@
+---
+import { OPEN_MIN, CLOSE_MIN, formatClock } from '../lib/hours';
+
+const sub = `${formatClock(OPEN_MIN)} to ${formatClock(CLOSE_MIN)}`;
+---
+
+<div class="neon" data-neon data-state="unknown" role="img" aria-label={`Open daily ${sub}`}>
+  <span class="neon-word" data-neon-word>OPEN</span>
+  <span class="neon-sub" data-neon-sub>{sub}</span>
+</div>

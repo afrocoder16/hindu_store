@@ -1,6 +1,7 @@
 ---
-import '@fontsource-variable/fraunces';
+import '@fontsource-variable/bricolage-grotesque';
 import '@fontsource-variable/dm-sans';
+import '@fontsource/yellowtail';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -22,9 +23,12 @@ const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | Marshall, 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#fff6e8" />
+    <meta name="theme-color" content="#150e0a" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{fullTitle}</title>
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
   </head>
   <body>
     <Header />
@@ -32,45 +36,17 @@ const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | Marshall, 
       <slot />
     </main>
     <Footer />
+
+    <button class="cartbar" type="button" data-cartbar data-open-cart hidden>
+      <span><b data-cartbar-count>0</b> View your order</span>
+      <span data-cartbar-total>$0.00</span>
+    </button>
+
     <CartDrawer />
     <div class="toast" data-toast role="status" aria-live="polite"></div>
 
     <script>
-      import { addToCart, cartCount, readCart } from '../scripts/cart';
-
-      const toast = document.querySelector<HTMLElement>('[data-toast]');
-      let toastTimer: number | undefined;
-      const showToast = (msg: string) => {
-        if (!toast) return;
-        toast.textContent = msg;
-        toast.dataset.show = 'true';
-        clearTimeout(toastTimer);
-        toastTimer = window.setTimeout(() => (toast.dataset.show = 'false'), 2200);
-      };
-
-      const renderBadge = () => {
-        const n = cartCount(readCart());
-        document.querySelectorAll<HTMLElement>('[data-cart-count]').forEach((el) => {
-          el.textContent = String(n);
-          el.hidden = n === 0;
-        });
-      };
-
-      document.addEventListener('click', (e) => {
-        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-add]');
-        if (!btn) return;
-        const qtyInput = btn.dataset.qtyInput ? document.querySelector<HTMLInputElement>(btn.dataset.qtyInput) : null;
-        const qty = qtyInput ? Number(qtyInput.value) || 1 : 1;
-        addToCart(
-          { id: btn.dataset.id!, name: btn.dataset.name!, price: Number(btn.dataset.price), image: btn.dataset.image! },
-          qty,
-        );
-        showToast(`Added ${btn.dataset.name} to your cart`);
-      });
-
-      window.addEventListener('cart:change', renderBadge);
-      window.addEventListener('storage', renderBadge);
-      renderBadge();
+      import '../scripts/ui';
     </script>
   </body>
 </html>

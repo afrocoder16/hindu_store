@@ -2,14 +2,21 @@
 import ProductCard from './ProductCard.astro';
 import { products } from '../data/products';
 import { categories } from '../data/categories';
+
+const tagline: Record<string, string> = {
+  'main-dishes': 'hot plates',
+  snacks: 'grab and go',
+  drinks: 'cool down',
+  desserts: 'sweet finish',
+};
 ---
 
 <section class="section" id="menu" aria-labelledby="menu-title">
   <div class="wrap">
-    <div class="section-head">
+    <div data-reveal>
       <span class="eyebrow">The menu</span>
-      <h2 id="menu-title">The whole <em>menu</em></h2>
-      <p>Main dishes, snacks, drinks and sweets from our deli counter. Add what you like and order for pickup or dine-in.</p>
+      <h2 id="menu-title">What's <span class="script" style="color:var(--brick);font-size:1.15em;text-transform:none">cooking</span></h2>
+      <p class="muted" style="max-width:34rem">Everything from our deli counter. Tap Add, and build your order. We'll text it to the kitchen for you.</p>
     </div>
 
     <div class="menu-tools">
@@ -18,7 +25,7 @@ import { categories } from '../data/categories';
         {categories.map((c) => <button class="chip" type="button" data-cat={c.id} aria-pressed="false">{c.name}</button>)}
       </div>
       <label class="search">
-        <span class="sr-only" style="position:absolute;left:-9999px">Search the menu</span>
+        <span class="sr-only">Search the menu</span>
         <input type="search" placeholder="Search the menu" data-menu-search autocomplete="off" />
       </label>
     </div>
@@ -26,7 +33,7 @@ import { categories } from '../data/categories';
     <div data-menu>
       {categories.map((c) => (
         <div class="menu-group" data-group={c.id}>
-          <h3>{c.name}</h3>
+          <h3>{c.name} <small>{tagline[c.id]}</small></h3>
           <div class="grid">
             {products.filter((p) => p.category === c.id).map((p) => <ProductCard product={p} />)}
           </div>
@@ -36,7 +43,7 @@ import { categories } from '../data/categories';
 
     <div class="menu-empty" data-menu-empty hidden>
       <p>No dishes match that search.</p>
-      <button class="btn btn-ghost btn-small" type="button" data-menu-reset>Show the full menu</button>
+      <button class="btn btn-small" type="button" data-menu-reset>Show the full menu</button>
     </div>
   </div>
 </section>

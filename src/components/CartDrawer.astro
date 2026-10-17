@@ -19,14 +19,14 @@ const hasCashApp = site.cashTag.trim() !== '';
     <div class="drawer-body">
       <div class="empty" data-empty hidden style="padding-block:2rem">
         <h3>Your cart is empty</h3>
-        <p class="muted">Add a few dishes from the menu to get started.</p>
+        <p class="muted">Add a few plates from the menu to get started.</p>
         <a class="btn" href="/#menu" data-close-cart>Browse the menu</a>
       </div>
       <ul class="cart-lines" data-lines></ul>
     </div>
     <div class="drawer-foot" data-cart-foot>
       <div class="sum"><div class="total"><span>Subtotal</span><span data-subtotal>$0.00</span></div></div>
-      <button class="btn btn-block" type="button" data-go-checkout style="margin-top:0.9rem">Checkout</button>
+      <button class="btn btn-gold btn-block btn-lg" type="button" data-go-checkout style="margin-top:0.9rem">Checkout</button>
     </div>
   </section>
 
@@ -57,7 +57,7 @@ const hasCashApp = site.cashTag.trim() !== '';
           <input id="co-name" name="name" type="text" autocomplete="name" required maxlength="60" />
         </div>
         <div class="field">
-          <label for="co-phone">Phone</label>
+          <label for="co-phone">Your phone</label>
           <input id="co-phone" name="phone" type="tel" autocomplete="tel" required maxlength="20" />
         </div>
         <div class="field">
@@ -78,8 +78,8 @@ const hasCashApp = site.cashTag.trim() !== '';
         <fieldset class="field">
           <legend>How will you pay?</legend>
           <div class="options">
-            <label class="option"><input type="radio" name="payment" value="counter" checked /><span>Pay at the counter<small>Cash or card</small></span></label>
-            {hasCashApp && <label class="option"><input type="radio" name="payment" value="cashapp" /><span>Cash App<small>Pay after you order</small></span></label>}
+            <label class="option"><input type="radio" name="payment" value="counter" checked /><span>At the counter<small>Cash or card</small></span></label>
+            {hasCashApp && <label class="option"><input type="radio" name="payment" value="cashapp" /><span>Cash App<small>Amount filled in for you</small></span></label>}
           </div>
         </fieldset>
 
@@ -92,30 +92,46 @@ const hasCashApp = site.cashTag.trim() !== '';
       </div>
     </div>
     <div class="drawer-foot">
-      <button class="btn btn-block" type="submit" data-place>Place order</button>
+      <button class="btn btn-gold btn-block btn-lg" type="submit" data-place>Place order</button>
+      <p class="note" style="margin:0.6rem 0 0;text-align:center">Next, you'll send your order to us by text.</p>
     </div>
   </form>
 
-  <!-- Step 3: confirmation -->
+  <!-- Step 3: send + pay -->
   <section class="view" data-view="done" hidden>
     <div class="drawer-body">
-      <p class="eyebrow">Your order number</p>
-      <div class="order-no" data-order-no></div>
-      <p class="note" data-order-meta></p>
-      <p data-pay-line></p>
-
-      <div class="pay-box" data-cash-box hidden>
-        <strong>Pay with Cash App</strong>
-        <a class="btn btn-orange" data-cash-link href="#" target="_blank" rel="noopener">Open Cash App</a>
-        <img class="qr-only-desktop" data-cash-qr alt="QR code to pay with Cash App" width="176" height="176" hidden />
-        <p class="note" style="margin:0">Add <strong data-cash-note></strong> in the note so we can match your payment.</p>
+      <div class="receipt">
+        <span class="eyebrow" style="margin:0 0 0.5rem">Your order number</span>
+        <div class="order-no" data-order-no></div>
+        <p class="note" style="margin:0.5rem 0 0" data-order-meta></p>
       </div>
 
-      <p class="note" data-send-status role="status" style="margin-top:1rem"></p>
-      <div class="field" data-order-text-wrap hidden>
-        <label for="order-text">Your order details (copy and send to us)</label>
-        <textarea id="order-text" data-order-text readonly rows="9"></textarea>
-      </div>
+      <ol class="order-steps">
+        <li>
+          <h3>Text us your order</h3>
+          <p>Your order isn't placed until you send the text.</p>
+          <div class="stack">
+            <a class="btn btn-gold btn-block" data-sms-link href="#">Text my order to {site.phoneDisplay}</a>
+            <button class="btn btn-outline btn-block btn-small" type="button" data-copy-order>Copy order text</button>
+          </div>
+          <div class="qr" data-sms-qr-wrap hidden>
+            <img data-sms-qr alt="QR code that opens a text message to the store with your order" width="160" height="160" />
+            <div class="note">On a computer? Scan with your phone to text from there.</div>
+          </div>
+          <p class="note" data-send-status role="status" style="margin:0.6rem 0 0"></p>
+        </li>
+        <li>
+          <h3 data-pay-title>Pay</h3>
+          <p data-pay-line></p>
+          <div class="stack" data-cash-box hidden>
+            <a class="btn btn-brick btn-block" data-cash-link href="#" target="_blank" rel="noopener">Pay with Cash App</a>
+            <div class="qr" data-cash-qr-wrap hidden>
+              <img data-cash-qr alt="QR code that opens Cash App to pay the store" width="160" height="160" />
+            </div>
+            <p class="note" style="margin:0">Put <strong data-cash-note></strong> in the Cash App note so we can match your payment.</p>
+          </div>
+        </li>
+      </ol>
     </div>
     <div class="drawer-foot">
       <button class="btn btn-block" type="button" data-close-cart>Done</button>

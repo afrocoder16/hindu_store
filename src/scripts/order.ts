@@ -228,19 +228,19 @@ interface Order {
 }
 
 function orderText(o: Order) {
-  const rows = o.lines.map((l) => `- ${l.qty} x ${l.name} (${money(l.price * l.qty)})`);
+  const rows = o.lines.map((l) => `${l.qty} x ${l.name}`);
+  const extras = [
+    ...(o.tax > 0 ? [`Tax ${money(o.tax)}`] : []),
+    ...(o.tip > 0 ? [`Tip ${money(o.tip)}`] : []),
+  ];
   return [
-    `New order ${o.no} for ${site.name}`,
-    '',
+    `${site.name.toUpperCase()} ORDER ${o.no}`,
     `${o.fulfillment}, ${o.when}`,
     '',
     ...rows,
     '',
-    `Subtotal: ${money(o.subtotal)}`,
-    ...(o.tax > 0 ? [`Tax: ${money(o.tax)}`] : []),
-    ...(o.tip > 0 ? [`Tip: ${money(o.tip)}`] : []),
-    `Total: ${money(o.total)}`,
-    `Payment: ${o.payment === 'cashapp' ? 'Cash App (customer will pay after ordering)' : 'Pay at the counter'}`,
+    `Total ${money(o.total)}${extras.length ? ` (incl. ${extras.join(', ')})` : ''}`,
+    `Pay: ${o.payment === 'cashapp' ? 'Cash App' : 'at the counter'}`,
     '',
     `Name: ${o.name}`,
     `Phone: ${o.phone}`,
@@ -248,58 +248,65 @@ function orderText(o: Order) {
   ].join('\n');
 }
 
-interface SendResult {
-  status: string;
-  /** True when the customer still has to send the order themselves and needs to see the text. */
-  showText: boolean;
-}
+/** `?&body=` works on both iOS and Android messaging apps. */
+const smsLink = (text: string) => `sms:${site.smsNumber}?&body=${encodeURIComponent(text)}`;
 
-async function sendOrder(text: string, no: string): Promise<SendResult> {
-  if (site.whatsapp) {
-    window.open(`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
-    return { status: 'WhatsApp opened with your order. Send the message to finish placing it.', showText: true };
-  }
-  if (site.email) {
-    window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(`New order ${no}`)}&body=${encodeURIComponent(text)}`;
-    return { status: 'Your email app opened with your order. Send the email to finish placing it.', showText: true };
-  }
+const isPhone = () => window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+async function qrFor(img: HTMLImageElement, wrap: HTMLElement, data: string) {
+  wrap.hidden = true;
   try {
-    await navigator.clipboard.writeText(text);
-    return { status: `Your order is copied but not sent yet. Paste it into a message to us, or call ${site.phoneDisplay}.`, showText: true };
-  } catch {
-    return { status: `Your order has not been sent. Copy the details below and send them to us, or call ${site.phoneDisplay}.`, showText: true };
+    const QRCode = (await import('qrcode')).default;
+    img.src = await QRCode.toDataURL(data, { margin: 1, width: 320, errorCorrectionLevel: 'M' });
+    wrap.hidden = false;
+  } catch (err) {
+    // The buttons still work without the QR code.
+    console.warn('QR code failed', err);
   }
 }
 
-async function showDone(o: Order, result: SendResult, text: string) {
+async function showDone(o: Order, text: string) {
   q('[data-order-no]').textContent = o.no;
   q('[data-order-meta]').textContent = `${o.fulfillment}, ${o.when}. Total ${money(o.total)}.`;
-  const payLine = q('[data-pay-line]');
-  const box = q('[data-cash-box]');
-  box.hidden = true;
 
+  const sms = smsLink(text);
+  q<HTMLAnchorElement>('[data-sms-link]').href = sms;
+  q('[data-send-status]').textContent = isPhone()
+    ? 'Your messages app should have opened. Press send to place the order.'
+    : `Open this on your phone, or call us at ${site.phoneDisplay}.`;
+  void qrFor(q<HTMLImageElement>('[data-sms-qr]'), q('[data-sms-qr-wrap]'), sms);
+
+  const copyBtn = q<HTMLButtonElement>('[data-copy-order]');
+  copyBtn.textContent = 'Copy order text';
+  copyBtn.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      copyBtn.textContent = 'Copied. Paste it in a text to us.';
+    } catch {
+      copyBtn.textContent = 'Could not copy. Select the text from the QR step.';
+    }
+  };
+
+  const cashBox = q('[data-cash-box]');
+  cashBox.hidden = true;
+  q('[data-cash-qr-wrap]').hidden = true;
   if (o.payment === 'cashapp' && cashTag) {
-    payLine.textContent = 'Last step: pay with Cash App so we can start your order.';
+    q('[data-pay-title]').textContent = 'Pay with Cash App';
+    q('[data-pay-line]').textContent = `Tap to open Cash App with ${money(o.total)} filled in (to $${cashTag}).`;
     const link = `https://cash.app/$${cashTag}/${o.total.toFixed(2)}`;
     q<HTMLAnchorElement>('[data-cash-link]').href = link;
+    q('[data-cash-link]').textContent = `Pay ${money(o.total)} with Cash App`;
     q('[data-cash-note]').textContent = o.no;
-    const qr = q<HTMLImageElement>('[data-cash-qr]');
-    qr.hidden = true;
-    box.hidden = false;
-    try {
-      const QRCode = (await import('qrcode')).default;
-      qr.src = await QRCode.toDataURL(link, { margin: 1, width: 352 });
-      qr.hidden = false;
-    } catch {
-      // The button still works without the QR code.
-    }
+    cashBox.hidden = false;
+    void qrFor(q<HTMLImageElement>('[data-cash-qr]'), q('[data-cash-qr-wrap]'), link);
   } else {
-    payLine.textContent = `Pay at the counter when you ${o.fulfillment === 'Dine-in' ? 'order' : 'pick up'}. Tell us your order number.`;
+    q('[data-pay-title]').textContent = 'Pay at the counter';
+    q('[data-pay-line]').textContent = `Pay with cash or card when you ${o.fulfillment === 'Dine-in' ? 'order' : 'pick up'}. Tell us your order number, ${o.no}.`;
   }
-  q('[data-send-status]').textContent = result.status;
-  q('[data-order-text-wrap]').hidden = !result.showText;
-  q<HTMLTextAreaElement>('[data-order-text]').value = text;
+
   show('done');
+  // On a phone, open the pre-filled text right away. Desktops show the QR code and buttons instead.
+  if (isPhone()) window.location.href = sms;
 }
 
 form.addEventListener('submit', async (e) => {
@@ -324,10 +331,9 @@ form.addEventListener('submit', async (e) => {
   };
 
   const text = orderText(order);
-  const result = await sendOrder(text, order.no);
   clearCart();
   form.reset();
-  await showDone(order, result, text);
+  await showDone(order, text);
 });
 
 renderCart();

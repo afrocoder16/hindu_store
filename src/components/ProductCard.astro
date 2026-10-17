@@ -22,28 +22,33 @@ const searchText = `${product.name} ${product.description} ${categoryName}`.toLo
       src={product.image}
       alt=""
       widths={[320, 480, 720]}
-      sizes="(min-width: 1040px) 270px, (min-width: 760px) 30vw, 46vw"
+      sizes="(min-width: 1100px) 280px, (min-width: 760px) 30vw, 46vw"
       loading="lazy"
     />
+    <span class="card-cat">{categoryName}</span>
+    <span class="card-price">{formatPrice(product.price, site.currency)}</span>
   </a>
   <div class="card-body">
-    <span class="tag">{categoryName}</span>
     <h3><a href={href}>{product.name}</a></h3>
     <p class="card-desc">{product.description}</p>
-    <div class="card-foot">
-      <span class="price">{formatPrice(product.price, site.currency)}</span>
+    <div class="add-area" data-add-area data-id={product.id}>
       <button
-        class="btn btn-small"
+        class="btn btn-small btn-gold"
         type="button"
         data-add
         data-id={product.id}
         data-name={product.name}
         data-price={product.price}
         data-image={thumb.src}
-        aria-label={`Add ${product.name} to cart`}
+        aria-label={`Add ${product.name} to your order`}
       >
-        Add
+        Add to order
       </button>
+      <div class="stepper" data-stepper hidden>
+        <button type="button" data-step="-1" data-id={product.id} aria-label={`Remove one ${product.name}`}>&minus;</button>
+        <span data-qty aria-live="polite">1</span>
+        <button type="button" data-step="1" data-id={product.id} aria-label={`Add one more ${product.name}`}>+</button>
+      </div>
     </div>
   </div>
 </article>

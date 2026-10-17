@@ -3,31 +3,20 @@ import { site } from '../config';
 import { OPEN_MIN, CLOSE_MIN, formatClock } from '../lib/hours';
 
 const links = [
-  { href: '/#special', label: 'Specials' },
+  { href: '/#special', label: 'This week' },
   { href: '/#menu', label: 'Menu' },
+  { href: '/#how', label: 'How to order' },
   { href: '/#story', label: 'Our story' },
   { href: '/#visit', label: 'Visit' },
 ];
-const hoursText = `${formatClock(OPEN_MIN)} to ${formatClock(CLOSE_MIN)}`;
+const [first, ...rest] = site.name.split(' ');
+const hoursText = `Daily ${formatClock(OPEN_MIN)} to ${formatClock(CLOSE_MIN)}`;
 ---
-
-<div class="topbar">
-  <div class="wrap">
-    <div class="topbar-info">
-      <span class="status" data-status data-open="false">Hours: daily {hoursText}</span>
-      <span>{site.address}</span>
-    </div>
-    <div class="topbar-info">
-      {site.phone && <a href={`tel:${site.phone}`}>{site.phoneDisplay}</a>}
-      <a href="/#menu">Online ordering available</a>
-    </div>
-  </div>
-</div>
 
 <header class="site-header">
   <div class="wrap bar">
     <a class="brand" href="/" aria-label={`${site.name} home`}>
-      <strong>{site.name}</strong>
+      <strong>{first} <span>{rest.join(' ')}</span></strong>
       <small>Groceries &middot; Deli</small>
     </a>
 
@@ -35,7 +24,8 @@ const hoursText = `${formatClock(OPEN_MIN)} to ${formatClock(CLOSE_MIN)}`;
       {links.map((l) => <a href={l.href}>{l.label}</a>)}
     </nav>
 
-    <a class="btn btn-small header-cta" href="/#menu">Start an order</a>
+    <span class="status-pill" data-status data-open="unknown">{hoursText}</span>
+    <a class="btn btn-gold btn-small header-cta" href="/#menu">Order now</a>
 
     <button class="icon-btn" type="button" data-open-cart aria-label="Open cart">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z" /><path d="M6 6 5 3H2" /><circle cx="9" cy="20" r="1.5" /><circle cx="18" cy="20" r="1.5" /></svg>
@@ -49,8 +39,6 @@ const hoursText = `${formatClock(OPEN_MIN)} to ${formatClock(CLOSE_MIN)}`;
 </header>
 
 <script>
-  import { OPEN_MIN, CLOSE_MIN, formatClock, isOpenNow } from '../lib/hours';
-
   const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
   const nav = document.getElementById('site-nav');
   const setNav = (open: boolean) => {
@@ -61,11 +49,4 @@ const hoursText = `${formatClock(OPEN_MIN)} to ${formatClock(CLOSE_MIN)}`;
   nav?.addEventListener('click', (e) => {
     if ((e.target as HTMLElement).closest('a')) setNav(false);
   });
-
-  const status = document.querySelector<HTMLElement>('[data-status]');
-  if (status) {
-    const open = isOpenNow();
-    status.dataset.open = String(open);
-    status.textContent = open ? `Open now, until ${formatClock(CLOSE_MIN)}` : `Closed now, opens ${formatClock(OPEN_MIN)}`;
-  }
 </script>
