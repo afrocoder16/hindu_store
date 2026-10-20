@@ -1,7 +1,7 @@
 // Single place for brand, contact and ordering details.
 //
-// TODO (confirm with the store): the address, email and hours come from public listings (Zabihah,
-// Marshall Independent). The phone number and Cash App tag were given by the owner's team.
+// TODO (confirm with the store): the address and hours come from public listings (Zabihah,
+// Marshall Independent). The phone numbers and Cash App tag were given by the owner's team.
 // Anything left empty is hidden on the site.
 export const site = {
   name: 'Hindi Store',
@@ -16,7 +16,7 @@ export const site = {
   /** Cell number that receives text orders. E.164 format used for sms: links. */
   smsNumber: '+15075912088',
   smsDisplay: '(507) 591-2088',
-  email: 'hindistore@hotmail.com',
+  email: '',
   currency: '$',
   timeZone: 'America/Chicago',
   /** 24h "HH:MM". Same hours every day for now. */
