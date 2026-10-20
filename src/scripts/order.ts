@@ -191,6 +191,10 @@ function renderSummary() {
   q('[data-s-tip]').textContent = money(t.tip);
   q('[data-s-total]').textContent = money(t.total);
   q('[data-place]').textContent = `Place order · ${money(t.total)}`;
+  q('[data-next-note]').textContent =
+    radioValue('payment') === 'cashapp' && cashTag
+      ? "Next, you'll pay with Cash App, then send your order to us by text."
+      : "Next, you'll send your order to us by text.";
 }
 
 q('[data-go-checkout]').addEventListener('click', () => {
@@ -269,10 +273,17 @@ async function showDone(o: Order, text: string) {
   q('[data-order-no]').textContent = o.no;
   q('[data-order-meta]').textContent = `${o.fulfillment}, ${o.when}. Total ${money(o.total)}.`;
 
+  // Cash App orders show the pay step first, then the text step. Counter orders keep text first.
+  const payFirst = o.payment === 'cashapp' && !!cashTag;
+  const steps = q('[data-steps]');
+  steps.append(q(payFirst ? '[data-step-text]' : '[data-step-pay]'));
+
   const sms = smsLink(text);
   q<HTMLAnchorElement>('[data-sms-link]').href = sms;
   q('[data-send-status]').textContent = isPhone()
-    ? 'Your messages app should have opened. Press send to place the order.'
+    ? payFirst
+      ? 'After you pay, tap the button above to open your messages app, then press send to place the order.'
+      : 'Your messages app should have opened. Press send to place the order.'
     : `Open this on your phone, or call us at ${site.phoneDisplay}.`;
   void qrFor(q<HTMLImageElement>('[data-sms-qr]'), q('[data-sms-qr-wrap]'), sms);
 
@@ -305,8 +316,9 @@ async function showDone(o: Order, text: string) {
   }
 
   show('done');
-  // On a phone, open the pre-filled text right away. Desktops show the QR code and buttons instead.
-  if (isPhone()) window.location.href = sms;
+  // Counter orders on a phone open the pre-filled text right away. Cash App orders wait until
+  // the customer has paid and taps the text button. Desktops show the QR code and buttons instead.
+  if (isPhone() && !payFirst) window.location.href = sms;
 }
 
 form.addEventListener('submit', async (e) => {

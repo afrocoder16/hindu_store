@@ -112,7 +112,7 @@ const tickerItems = products.map((p) => p.name);
         <div class="step" data-reveal style="--d:0.1s">
           <span class="step-num">02</span>
           <h3>Text it to us</h3>
-          <p>One tap opens a ready-to-send text to {site.phoneDisplay} with your whole order and order number.</p>
+          <p>One tap opens a ready-to-send text to {site.smsDisplay} with your whole order and order number.</p>
         </div>
         <div class="step" data-reveal style="--d:0.2s">
           <span class="step-num">03</span>
@@ -158,7 +158,8 @@ const tickerItems = products.map((p) => p.name);
         <ul class="info-list">
           <li><strong>Hours</strong>Open daily, {formatClock(OPEN_MIN)} to {formatClock(CLOSE_MIN)}</li>
           <li><strong>Address</strong>{site.address}</li>
-          <li><strong>Text or call</strong><a href={`sms:${site.smsNumber}`}>{site.phoneDisplay}</a></li>
+          <li><strong>Call</strong><a href={`tel:${site.phone}`}>{site.phoneDisplay}</a></li>
+          <li><strong>Text orders</strong><a href={`sms:${site.smsNumber}`}>{site.smsDisplay}</a></li>
         </ul>
         <div class="btn-row">
           <a class="btn btn-gold" href={site.directionsUrl} target="_blank" rel="noopener">Get directions</a>

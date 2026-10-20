@@ -93,7 +93,7 @@ const hasCashApp = site.cashTag.trim() !== '';
     </div>
     <div class="drawer-foot">
       <button class="btn btn-gold btn-block btn-lg" type="submit" data-place>Place order</button>
-      <p class="note" style="margin:0.6rem 0 0;text-align:center">Next, you'll send your order to us by text.</p>
+      <p class="note" style="margin:0.6rem 0 0;text-align:center" data-next-note>Next, you'll send your order to us by text.</p>
     </div>
   </form>
 
@@ -106,12 +106,12 @@ const hasCashApp = site.cashTag.trim() !== '';
         <p class="note" style="margin:0.5rem 0 0" data-order-meta></p>
       </div>
 
-      <ol class="order-steps">
-        <li>
+      <ol class="order-steps" data-steps>
+        <li data-step-text>
           <h3>Text us your order</h3>
           <p>Your order isn't placed until you send the text.</p>
           <div class="stack">
-            <a class="btn btn-gold btn-block" data-sms-link href="#">Text my order to {site.phoneDisplay}</a>
+            <a class="btn btn-gold btn-block" data-sms-link href="#">Text my order to {site.smsDisplay}</a>
             <button class="btn btn-outline btn-block btn-small" type="button" data-copy-order>Copy order text</button>
           </div>
           <div class="qr" data-sms-qr-wrap hidden>
@@ -120,7 +120,7 @@ const hasCashApp = site.cashTag.trim() !== '';
           </div>
           <p class="note" data-send-status role="status" style="margin:0.6rem 0 0"></p>
         </li>
-        <li>
+        <li data-step-pay>
           <h3 data-pay-title>Pay</h3>
           <p data-pay-line></p>
           <div class="stack" data-cash-box hidden>

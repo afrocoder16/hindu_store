@@ -10,16 +10,17 @@ export const site = {
   address: '208 W Main St, Marshall, MN 56258',
   directionsUrl: 'https://www.google.com/maps/search/?api=1&query=Hindi+Store+208+W+Main+St+Marshall+MN',
   mapEmbedUrl: 'https://www.google.com/maps?q=208+W+Main+St,+Marshall,+MN+56258&output=embed',
-  /** Customer-facing number. Orders are texted here, and "Call us" dials it. */
+  /** Store landline. "Call us" dials it. It cannot receive texts. */
   phone: '507-929-3881',
   phoneDisplay: '(507) 929-3881',
-  /** E.164 format used for sms: links. */
-  smsNumber: '+15079293881',
+  /** Cell number that receives text orders. E.164 format used for sms: links. */
+  smsNumber: '+15075912088',
+  smsDisplay: '(507) 591-2088',
   email: 'hindistore@hotmail.com',
   currency: '$',
   timeZone: 'America/Chicago',
   /** 24h "HH:MM". Same hours every day for now. */
-  hours: { open: '11:00', close: '21:00' },
+  hours: { open: '10:00', close: '21:00' },
   /** Sales tax added at checkout, e.g. 0.07375. Left at 0 until the store confirms the rate. */
   taxRate: 0,
   /** Minutes the kitchen needs before the earliest pickup. */
