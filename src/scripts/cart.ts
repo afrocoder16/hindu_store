@@ -6,7 +6,8 @@ export interface CartLine {
   qty: number;
 }
 
-const KEY = 'hindi-store-cart';
+// Bump the version when menu ids or prices change, so old saved carts are dropped.
+const KEY = 'hindi-store-cart-v2';
 const MAX_QTY = 99;
 
 export function readCart(): CartLine[] {

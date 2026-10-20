@@ -1,9 +1,10 @@
 ---
 import { Image, getImage } from 'astro:assets';
+import { variantsOf } from '../data/products';
 import type { Product } from '../data/products';
 import { categories } from '../data/categories';
 import { site } from '../config';
-import { formatPrice } from '../lib/format';
+import { formatPrice, priceLabel } from '../lib/format';
 
 interface Props {
   product: Product;
@@ -12,6 +13,8 @@ interface Props {
 const { product } = Astro.props;
 const categoryName = categories.find((c) => c.id === product.category)?.name;
 const thumb = await getImage({ src: product.image, width: 144, height: 144, format: 'webp' });
+const variants = variantsOf(product);
+const sized = Boolean(product.sizes);
 const href = `/product/${product.id}/`;
 const searchText = `${product.name} ${product.description} ${categoryName}`.toLowerCase();
 ---
@@ -26,29 +29,39 @@ const searchText = `${product.name} ${product.description} ${categoryName}`.toLo
       loading="lazy"
     />
     <span class="card-cat">{categoryName}</span>
-    <span class="card-price">{formatPrice(product.price, site.currency)}</span>
+    <span class="card-price">{priceLabel(product, site.currency)}</span>
   </a>
   <div class="card-body">
     <h3><a href={href}>{product.name}</a></h3>
     <p class="card-desc">{product.description}</p>
-    <div class="add-area" data-add-area data-id={product.id}>
-      <button
-        class="btn btn-small btn-gold"
-        type="button"
-        data-add
-        data-id={product.id}
-        data-name={product.name}
-        data-price={product.price}
-        data-image={thumb.src}
-        aria-label={`Add ${product.name} to your order`}
-      >
-        Add to order
-      </button>
-      <div class="stepper" data-stepper hidden>
-        <button type="button" data-step="-1" data-id={product.id} aria-label={`Remove one ${product.name}`}>&minus;</button>
-        <span data-qty aria-live="polite">1</span>
-        <button type="button" data-step="1" data-id={product.id} aria-label={`Add one more ${product.name}`}>+</button>
-      </div>
+    <div class:list={['add-list', { sized }]}>
+      {variants.map((v) => (
+        <div class="add-area" data-add-area data-id={v.id}>
+          {sized && (
+            <span class="size-label">
+              {v.label}
+              <b>{formatPrice(v.price, site.currency)}</b>
+            </span>
+          )}
+          <button
+            class="btn btn-small btn-gold"
+            type="button"
+            data-add
+            data-id={v.id}
+            data-name={v.name}
+            data-price={v.price}
+            data-image={thumb.src}
+            aria-label={`Add ${v.name} to your order`}
+          >
+            {sized ? 'Add' : 'Add to order'}
+          </button>
+          <div class="stepper" data-stepper hidden>
+            <button type="button" data-step="-1" data-id={v.id} aria-label={`Remove one ${v.name}`}>&minus;</button>
+            <span data-qty aria-live="polite">1</span>
+            <button type="button" data-step="1" data-id={v.id} aria-label={`Add one more ${v.name}`}>+</button>
+          </div>
+        </div>
+      ))}
     </div>
   </div>
 </article>

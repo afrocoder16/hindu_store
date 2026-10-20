@@ -2,8 +2,9 @@
 import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MenuSection from '../components/MenuSection.astro';
+import Reviews from '../components/Reviews.astro';
 import NeonSign from '../components/NeonSign.astro';
-import { products } from '../data/products';
+import { products, variantsOf } from '../data/products';
 import { site } from '../config';
 import { formatPrice } from '../lib/format';
 import { OPEN_MIN, CLOSE_MIN, formatClock } from '../lib/hours';
@@ -13,6 +14,7 @@ import ahmed from '../assets/store/ahmed-omar.webp';
 const byId = (id: string) => products.find((p) => p.id === id)!;
 const special = byId(site.special.productId);
 const specialThumb = await getImage({ src: special.image, width: 144, height: 144, format: 'webp' });
+const specialVariants = variantsOf(special);
 const tickerItems = products.map((p) => p.name);
 ---
 
@@ -56,8 +58,8 @@ const tickerItems = products.map((p) => p.name);
           <figcaption>sambusa</figcaption>
         </figure>
         <figure class="polaroid p2">
-          <Image src={byId('baklava').image} alt="Baklava" width={260} height={260} loading="eager" />
-          <figcaption>baklava</figcaption>
+          <Image src={byId('meat-rice').image} alt="Rice and lamb gyro" width={260} height={260} loading="eager" />
+          <figcaption>lamb gyro</figcaption>
         </figure>
       </div>
     </div>
@@ -73,24 +75,31 @@ const tickerItems = products.map((p) => p.name);
     <div class="wrap feature">
       <div class="feature-img" data-reveal>
         <Image src={special.image} alt={special.name} widths={[480, 720, 1000]} sizes="(min-width: 900px) 520px, 90vw" loading="lazy" />
-        <span class="price-tag">{formatPrice(special.price, site.currency)}</span>
+        <span class="price-tag">
+          <span>
+            {special.sizes && <small>from</small>}
+            {formatPrice(special.price, site.currency)}
+          </span>
+        </span>
       </div>
       <div class="feature-body" data-reveal style="--d:0.1s">
         <span class="script-label">{site.special.label}</span>
         <h2 id="special-title">{site.special.title}</h2>
         <p class="muted" style="font-size:1.15rem;max-width:30rem">{site.special.text}</p>
         <div class="btn-row" style="margin-top:1.6rem">
-          <button
-            class="btn btn-gold btn-lg"
-            type="button"
-            data-add
-            data-id={special.id}
-            data-name={special.name}
-            data-price={special.price}
-            data-image={specialThumb.src}
-          >
-            Add to order
-          </button>
+          {specialVariants.map((v) => (
+            <button
+              class="btn btn-gold btn-lg"
+              type="button"
+              data-add
+              data-id={v.id}
+              data-name={v.name}
+              data-price={v.price}
+              data-image={specialThumb.src}
+            >
+              {v.label ? `Add ${v.label} · ${formatPrice(v.price, site.currency)}` : 'Add to order'}
+            </button>
+          ))}
           <a class="btn btn-ghost btn-lg" href={`/product/${special.id}/`}>Details</a>
         </div>
       </div>
@@ -124,6 +133,8 @@ const tickerItems = products.map((p) => p.name);
   </section>
 
   <MenuSection />
+
+  <Reviews />
 
   <section class="section story" id="story" aria-labelledby="story-title">
     <div class="wrap story-grid">

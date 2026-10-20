@@ -1,0 +1,28 @@
+---
+import { reviews } from '../data/reviews';
+import { site } from '../config';
+---
+
+<section class="section reviews" id="reviews" aria-labelledby="reviews-title">
+  <div class="wrap">
+    <div data-reveal>
+      <span class="eyebrow">Reviews</span>
+      <h2 id="reviews-title">Our <span class="script" style="color:var(--brick);font-size:1.15em;text-transform:none">customers</span> say</h2>
+      <p class="muted" style="max-width:34rem">A few kind words from our Google reviews.</p>
+    </div>
+
+    <div class="review-grid">
+      {reviews.map((r, i) => (
+        <figure class="review" data-reveal style={`--d:${(i % 3) * 0.1}s`}>
+          <blockquote>{r.text}</blockquote>
+          <figcaption>{r.name} <span>on Google</span></figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <div class="review-cta" data-reveal>
+      <p>Enjoyed your meal? Tell others about it.</p>
+      <a class="btn btn-gold btn-lg" href={site.reviewUrl} target="_blank" rel="noopener noreferrer">Give us a review</a>
+    </div>
+  </div>
+</section>

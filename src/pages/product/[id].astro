@@ -2,10 +2,10 @@
 import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import { products } from '../../data/products';
+import { products, variantsOf } from '../../data/products';
 import { categories } from '../../data/categories';
 import { site } from '../../config';
-import { formatPrice } from '../../lib/format';
+import { formatPrice, priceLabel } from '../../lib/format';
 
 export function getStaticPaths() {
   return products.map((product) => ({ params: { id: product.id }, props: { product } }));
@@ -15,6 +15,7 @@ const { product } = Astro.props;
 const category = categories.find((c) => c.id === product.category)!;
 const related = products.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 const thumb = await getImage({ src: product.image, width: 144, height: 144, format: 'webp' });
+const variants = variantsOf(product);
 ---
 
 <BaseLayout title={product.name} description={product.description}>
@@ -31,7 +32,7 @@ const thumb = await getImage({ src: product.image, width: 144, height: 144, form
         <span class="tag">{category.name}</span>
         <h1>{product.name}</h1>
         <p class="muted">{product.description}</p>
-        <p class="product-price">{formatPrice(product.price, site.currency)}</p>
+        <p class="product-price">{priceLabel(product, site.currency)}</p>
 
         <div class="buy-row">
           <div class="qty" data-qty-wrap>
@@ -39,18 +40,20 @@ const thumb = await getImage({ src: product.image, width: 144, height: 144, form
             <input id="qty" type="number" min="1" max="99" value="1" inputmode="numeric" aria-label="Quantity" />
             <button type="button" aria-label="Increase quantity" data-step="1">+</button>
           </div>
-          <button
-            class="btn btn-gold btn-lg"
-            type="button"
-            data-add
-            data-qty-input="#qty"
-            data-id={product.id}
-            data-name={product.name}
-            data-price={product.price}
-            data-image={thumb.src}
-          >
-            Add to order
-          </button>
+          {variants.map((v) => (
+            <button
+              class="btn btn-gold btn-lg"
+              type="button"
+              data-add
+              data-qty-input="#qty"
+              data-id={v.id}
+              data-name={v.name}
+              data-price={v.price}
+              data-image={thumb.src}
+            >
+              {v.label ? `Add ${v.label} · ${formatPrice(v.price, site.currency)}` : 'Add to order'}
+            </button>
+          ))}
         </div>
       </div>
     </section>

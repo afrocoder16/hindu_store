@@ -2033,3 +2033,145 @@ main {
 .ticket .muted {
   color: var(--muted-dark);
 }
+
+/* Sized dishes: one add row per size */
+.add-list {
+  margin-top: auto;
+}
+
+.add-list .add-area {
+  margin-top: 0;
+}
+
+.add-list.sized {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.add-list.sized .add-area {
+  padding-top: 0.35rem;
+}
+
+.size-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.2rem;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.size-label b {
+  font: 800 1rem var(--font-display);
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--ink);
+}
+
+@media (min-width: 760px) {
+  .add-list.sized .add-area {
+    display: grid;
+    grid-template-columns: 1fr 7rem;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .add-list.sized .size-label {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.1rem;
+    margin-bottom: 0;
+  }
+}
+
+.price-tag > span {
+  text-align: center;
+  line-height: 1;
+}
+
+.price-tag small {
+  display: block;
+  margin-bottom: 0.2rem;
+  font: 800 0.72rem var(--font-body);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Reviews */
+.reviews {
+  background: var(--paper);
+  border-top: 2px solid var(--line);
+}
+
+.review-grid {
+  display: grid;
+  gap: 1.4rem;
+  margin-top: 2.2rem;
+}
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0;
+  padding: 1.4rem 1.4rem 1.3rem;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.review blockquote {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.review blockquote::before {
+  content: '\201C';
+  display: block;
+  margin-bottom: 0.5rem;
+  font: 800 3.2rem/0.5 var(--font-display);
+  color: var(--brick);
+}
+
+.review figcaption {
+  margin-top: auto;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.review figcaption span {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.review-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.4rem;
+  margin-top: 2.4rem;
+}
+
+.review-cta p {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+@media (min-width: 700px) {
+  .review-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1000px) {
+  .review-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.8rem;
+  }
+}

@@ -10,6 +10,11 @@ export const site = {
   address: '208 W Main St, Marshall, MN 56258',
   directionsUrl: 'https://www.google.com/maps/search/?api=1&query=Hindi+Store+208+W+Main+St+Marshall+MN',
   mapEmbedUrl: 'https://www.google.com/maps?q=208+W+Main+St,+Marshall,+MN+56258&output=embed',
+  /**
+   * Where the "Give us a review" button goes. This opens the store's Google Maps page, where customers
+   * tap "Write a review". Swap in the store's direct review link when the owner has it.
+   */
+  reviewUrl: 'https://www.google.com/maps/search/?api=1&query=Hindi+Store+208+W+Main+St+Marshall+MN',
   /** Store landline. "Call us" dials it. It cannot receive texts. */
   phone: '507-929-3881',
   phoneDisplay: '(507) 929-3881',
@@ -31,8 +36,8 @@ export const site = {
   special: {
     productId: 'fish-rice',
     label: "This week's plate",
-    title: 'Fried fish over spiced rice',
-    text: 'Crisp fried fish fillets on fragrant rice with peas, peppers and fresh herbs. Cooked to order at our deli counter.',
+    title: 'Tilapia fish over spiced rice',
+    text: 'Crisp fried tilapia fillets on fragrant rice with peas, peppers and fresh herbs. Cooked to order at our deli counter.',
   },
   credit: { name: 'midvora.', url: 'https://midvora.com' },
 };

@@ -3,6 +3,9 @@ import ProductCard from './ProductCard.astro';
 import { products } from '../data/products';
 import { categories } from '../data/categories';
 
+// Only show categories that have dishes on the menu.
+const activeCategories = categories.filter((c) => products.some((p) => p.category === c.id));
+
 const tagline: Record<string, string> = {
   'main-dishes': 'hot plates',
   snacks: 'grab and go',
@@ -22,7 +25,7 @@ const tagline: Record<string, string> = {
     <div class="menu-tools">
       <div class="chips" role="group" aria-label="Menu categories">
         <button class="chip" type="button" data-cat="all" aria-pressed="true">All</button>
-        {categories.map((c) => <button class="chip" type="button" data-cat={c.id} aria-pressed="false">{c.name}</button>)}
+        {activeCategories.map((c) => <button class="chip" type="button" data-cat={c.id} aria-pressed="false">{c.name}</button>)}
       </div>
       <label class="search">
         <span class="sr-only">Search the menu</span>
@@ -31,7 +34,7 @@ const tagline: Record<string, string> = {
     </div>
 
     <div data-menu>
-      {categories.map((c) => (
+      {activeCategories.map((c) => (
         <div class="menu-group" data-group={c.id}>
           <h3>{c.name} <small>{tagline[c.id]}</small></h3>
           <div class="grid">
