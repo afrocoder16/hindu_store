@@ -25,13 +25,21 @@ export const site = {
   currency: '$',
   timeZone: 'America/Chicago',
   /** 24h "HH:MM". Same hours every day for now. */
-  hours: { open: '10:00', close: '21:00' },
+  hours: { open: '10:00', close: '19:30' },
   /** Sales tax added at checkout, e.g. 0.07375. Left at 0 until the store confirms the rate. */
   taxRate: 0,
   /** Minutes the kitchen needs before the earliest pickup. */
   prepMinutes: 20,
   /** Cash App $cashtag, with or without the "$". Leave empty to hide the Cash App option. */
   cashTag: 'sadiasalah11',
+  /** Social pages. Leave a link empty to hide it. */
+  social: {
+    instagram: 'https://www.instagram.com/hindistoremarshall.mn/',
+    facebook: 'https://www.facebook.com/p/Hindi-store-deli-100063622808246/',
+    tiktok: 'https://www.tiktok.com/t/ZTfSQh3D3/',
+  },
+  /** TODO (confirm with the store): how much notice catering and cake orders need. */
+  catering: { notice: '2 days' },
   /** The plate shown in the featured section. `productId` must exist in data/products.ts. */
   special: {
     productId: 'fish-rice',

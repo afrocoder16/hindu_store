@@ -2175,3 +2175,94 @@ main {
     gap: 1.8rem;
   }
 }
+
+/* Catering */
+.cater-steps {
+  margin: 1.2rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+  counter-reset: cs;
+  max-width: 32rem;
+}
+
+.cater-steps li {
+  position: relative;
+  padding-left: 2.2rem;
+  counter-increment: cs;
+}
+
+.cater-steps li::before {
+  content: counter(cs);
+  position: absolute;
+  left: 0;
+  top: 0.1rem;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--night);
+  font: 800 0.85rem var(--font-display);
+}
+
+.catering .note {
+  color: var(--muted-dark);
+  font-size: 0.9rem;
+}
+
+/* Social links */
+.site-footer .social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.9rem 0.45rem 0.7rem;
+  border: 2px solid rgb(255 243 221 / 0.35);
+  border-radius: 999px;
+  color: var(--cream);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.social a:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--night);
+  text-decoration: none;
+}
+
+.social svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* Header: keep one line on mid-size screens now that there are six links */
+.brand,
+.nav a,
+.status-pill,
+.header-cta {
+  white-space: nowrap;
+}
+
+@media (min-width: 960px) and (max-width: 1179px) {
+  .nav {
+    gap: 1.2rem;
+  }
+
+  .status-pill {
+    display: none;
+  }
+}

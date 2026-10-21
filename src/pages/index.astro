@@ -2,9 +2,10 @@
 import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import MenuSection from '../components/MenuSection.astro';
+import Catering from '../components/Catering.astro';
 import Reviews from '../components/Reviews.astro';
 import NeonSign from '../components/NeonSign.astro';
-import { products, variantsOf } from '../data/products';
+import { products, variantsOf, priceVaries } from '../data/products';
 import { site } from '../config';
 import { formatPrice } from '../lib/format';
 import { OPEN_MIN, CLOSE_MIN, formatClock } from '../lib/hours';
@@ -16,6 +17,11 @@ const special = byId(site.special.productId);
 const specialThumb = await getImage({ src: special.image, width: 144, height: 144, format: 'webp' });
 const specialVariants = variantsOf(special);
 const tickerItems = products.map((p) => p.name);
+const socialLinks = [
+  { label: 'Instagram', url: site.social.instagram },
+  { label: 'Facebook', url: site.social.facebook },
+  { label: 'TikTok', url: site.social.tiktok },
+].filter((s) => s.url);
 ---
 
 <BaseLayout>
@@ -77,7 +83,7 @@ const tickerItems = products.map((p) => p.name);
         <Image src={special.image} alt={special.name} widths={[480, 720, 1000]} sizes="(min-width: 900px) 520px, 90vw" loading="lazy" />
         <span class="price-tag">
           <span>
-            {special.sizes && <small>from</small>}
+            {priceVaries(special) && <small>from</small>}
             {formatPrice(special.price, site.currency)}
           </span>
         </span>
@@ -134,6 +140,8 @@ const tickerItems = products.map((p) => p.name);
 
   <MenuSection />
 
+  <Catering />
+
   <Reviews />
 
   <section class="section story" id="story" aria-labelledby="story-title">
@@ -171,6 +179,17 @@ const tickerItems = products.map((p) => p.name);
           <li><strong>Address</strong>{site.address}</li>
           <li><strong>Call</strong><a href={`tel:${site.phone}`}>{site.phoneDisplay}</a></li>
           <li><strong>Text orders</strong><a href={`sms:${site.smsNumber}`}>{site.smsDisplay}</a></li>
+          {socialLinks.length > 0 && (
+            <li>
+              <strong>Follow us</strong>
+              {socialLinks.map((s, i) => (
+                <>
+                  {i > 0 && ', '}
+                  <a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a>
+                </>
+              ))}
+            </li>
+          )}
         </ul>
         <div class="btn-row">
           <a class="btn btn-gold" href={site.directionsUrl} target="_blank" rel="noopener">Get directions</a>

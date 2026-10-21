@@ -1,0 +1,43 @@
+---
+import { Image } from 'astro:assets';
+import pineappleCake from '../assets/products/pineapple-cake.jpg';
+import { site } from '../config';
+
+const text = [
+  "Hi Hindi Store, I'd like to ask about catering.",
+  '',
+  'Event (birthday, graduation, other):',
+  'Date:',
+  'How many people:',
+  'What I would like:',
+  '',
+  'Name:',
+].join('\n');
+const sms = `sms:${site.smsNumber}?&body=${encodeURIComponent(text)}`;
+---
+
+<section class="section dark catering" id="catering" aria-labelledby="catering-title">
+  <div class="wrap feature">
+    <div class="feature-img" data-reveal>
+      <Image src={pineappleCake} alt="Pineapple upside-down cake with cherries" widths={[480, 720]} sizes="(min-width: 900px) 520px, 90vw" loading="lazy" />
+    </div>
+    <div class="feature-body" data-reveal style="--d:0.1s">
+      <span class="script-label">Plan ahead</span>
+      <h2 id="catering-title">Catering &amp; events</h2>
+      <p class="muted" style="font-size:1.15rem;max-width:32rem">
+        We cater birthdays, graduations and other events. Pineapple Cake and other catering orders need to be ordered ahead
+        of time, at least {site.catering.notice} before you need them.
+      </p>
+      <ul class="cater-steps">
+        <li>Text us the event, the date and how many people.</li>
+        <li>We reply with what we can make and the price.</li>
+        <li>We have it ready for pickup on your day.</li>
+      </ul>
+      <div class="btn-row" style="margin-top:1.6rem">
+        <a class="btn btn-gold btn-lg" href={sms}>Text us about your event</a>
+        <a class="btn btn-ghost btn-lg" href={`tel:${site.phone}`}>Call {site.phoneDisplay}</a>
+      </div>
+      <p class="note" style="margin:0.9rem 0 0">Texts go to {site.smsDisplay}. The store line, {site.phoneDisplay}, is for calls.</p>
+    </div>
+  </div>
+</section>
